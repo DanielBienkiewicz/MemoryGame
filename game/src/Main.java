@@ -48,16 +48,21 @@ public class Main {
     private void runGame(int[] diffParams) {
         PlayBoard board = new PlayBoard(diffParams[0]);
         int left = diffParams[1];
-        while (left > 0) {
+        while (left > 0 && board.getUncovered() < diffParams[0]) {
             String coordinatesFirst = inputCoordinates(diffParams[0]);
             String first = board.uncoverWord(coordinatesFirst);
             board.printBoard(left);
             String coordinatesSecond = inputCoordinates(diffParams[0]);
             String second = board.uncoverWord(coordinatesSecond);
             board.printBoard(left);
-            System.out.println("Press any key");
+            System.out.println("Enter any letter");
             sc.next();
-            if (!first.equals(second)) board.coverWords(coordinatesFirst, coordinatesSecond);
+           // System.out.println("\033[H\033[2J");
+            if (!first.equals(second)) {
+                board.coverWords(coordinatesFirst, coordinatesSecond);
+            } else {
+                board.addUncovered();
+            }
             left--;
         }
     }

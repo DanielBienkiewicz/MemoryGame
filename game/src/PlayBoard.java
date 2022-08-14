@@ -5,11 +5,14 @@ import java.util.*;
 public class PlayBoard {
 
     int size;
+    int uncovered = 0;
     ArrayList<String> words = new ArrayList<>();
     List<String> rowA;
 
     List<String> rowB = new ArrayList();
     boolean[] hidden;
+
+
 
 
     public PlayBoard(int diffParam) {
@@ -22,6 +25,14 @@ public class PlayBoard {
         rowA = new ArrayList<>(words.subList(0, size));
         rowB.addAll(rowA);
         Collections.shuffle(rowB);
+    }
+
+    public int getUncovered() {
+        return uncovered;
+    }
+
+    public void addUncovered() {
+        this.uncovered ++;
     }
 
     private void loadWords() {
@@ -37,31 +48,40 @@ public class PlayBoard {
         s.close();
     }
 
+
+
+
     public void printBoard(int left) {
         System.out.println("\nLevel: " + (size == 4 ? "easy" : "hard"));
         System.out.println("Guess chances: " + left + "\n");
         System.out.printf("  %15s %15s %15s %15s\nA", "1", "2", "3", "4");
         for (int i = 0; i < size; i++) {
+            if (i == 4) {
+                System.out.printf("  %15s %15s %15s %15s\n ", "5", "6", "7", "8");
+            }
             System.out.printf(" %15s", (hidden[i] ? "X" :  rowA.get(i)));
-            if (i > 0 && i % 3 == 0) System.out.println();
+            if (i == 3 || i == 7) System.out.println();
         }
+        System.out.printf("  %15s %15s %15s %15s\nB", "1", "2", "3", "4");
         for (int i = 0; i < size; i++) {
-            if  (i == 0) System.out.print("B");
-            System.out.printf(" %15s", (hidden[i + 4] ? "X" :  rowB.get(i)));
-            if (i > 0 && i % 3 == 0) System.out.println();
+            if (i == 4) {
+                System.out.printf("  %15s %15s %15s %15s\n ", "5", "6", "7", "8");
+            }
+            System.out.printf(" %15s", (hidden[i + size] ? "X" :  rowB.get(i)));
+            if (i == 3 || i == 7) System.out.println();
         }
-
+        System.out.println();
 
     }
 
 
     public void coverWords(String... coordinates) {
-        hidden[(coordinates[0].charAt(0) - 'A') + (coordinates[0].charAt(1) - '0')] = true;
-        hidden[(coordinates[1].charAt(0) - 'A') + (coordinates[1].charAt(1) - '0')] = true;
+        hidden[(coordinates[0].charAt(0) - 'A') * size + (coordinates[0].charAt(1) - '1')] = true;
+        hidden[(coordinates[1].charAt(0) - 'A') * size + (coordinates[1].charAt(1) - '1')] = true;
     }
 
     public String uncoverWord(String coordinates) {
-        hidden[(coordinates.charAt(0) - 'A') + (coordinates.charAt(1) - '0')] = false;
+        hidden[(coordinates.charAt(0) - 'A') * size + (coordinates.charAt(1) - '1')] = false;
         int column = Integer.parseInt(coordinates.substring(1)) - 1;
         return coordinates.charAt(0) == 'A' ? rowA.get(column) : rowB.get(column) ;
     }
